@@ -27,7 +27,12 @@ public class Product {
     private String description;
     private BigDecimal price;
     private StockStatus stockStatus;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
     private Category category;
+
+    @OneToMany(mappedBy = "product")
     private List<ProductImage> images;
 
     public void UpdateStockStatus(StockStatus newStockStatus) {

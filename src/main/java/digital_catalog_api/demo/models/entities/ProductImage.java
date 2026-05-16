@@ -22,6 +22,8 @@ public class ProductImage {
     private UUID id;
     private String imageUrl;
     private Integer displayOrder;
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     @Override

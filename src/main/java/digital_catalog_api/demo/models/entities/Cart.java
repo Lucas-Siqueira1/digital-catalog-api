@@ -21,6 +21,8 @@ public class Cart implements WhatsAppMessageBuilder{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @OneToMany(mappedBy = "cart")
     private List<CartItem> items;
     private String sessionId;
     private Instant createdAt;
@@ -30,12 +32,7 @@ public class Cart implements WhatsAppMessageBuilder{
     }
 
     public void removeItem(UUID productId) {
-        for (CartItem item : items) {
-            if(item.getId().equals(productId)) {
-                items.remove(item);
-                return;
-            }
-        }
+        items.removeIf(item -> item.getId().equals(productId));
     }
 
     public String buildMessage() {
