@@ -18,8 +18,8 @@ import java.util.UUID;
 public class ProductImage {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID id = UUID.randomUUID();
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     private String imageUrl;
     private Integer displayOrder;
     private Product product;
@@ -35,6 +35,4 @@ public class ProductImage {
     public int hashCode() {
         return Objects.hashCode(id);
     }
-
-    public String getUrl();
 }

@@ -13,17 +13,17 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "carts")
+@Table(name = "cart_items")
 public class CartItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID id = UUID.randomUUID();
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     private Product product;
     private Integer quantity;
     private Cart cart;
 
     public BigDecimal getSubtotal() {
-        return product.getPrice();
+        return product.getPrice().multiply(new BigDecimal(quantity));
     }
 }

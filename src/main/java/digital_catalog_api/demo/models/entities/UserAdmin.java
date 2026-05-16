@@ -19,8 +19,8 @@ import java.util.UUID;
 public class UserAdmin {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID id = UUID.randomUUID();
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     private String username;
     private String email;
     private String password;
