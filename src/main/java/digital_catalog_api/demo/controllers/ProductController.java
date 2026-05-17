@@ -6,7 +6,10 @@ import digital_catalog_api.demo.models.entities.enums.StockStatus;
 import digital_catalog_api.demo.services.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.io.IOException;
 import java.net.URI;
 import java.util.UUID;
 
@@ -46,5 +49,12 @@ public class ProductController {
     public ResponseEntity<ProductResponseDto> updateStock(@PathVariable UUID id, @RequestBody StockStatusRequestDto stockStatus) {
         ProductResponseDto product = productService.updateStock(id, stockStatus.getStockStatus());
         return ResponseEntity.ok().body(product);
+    }
+
+    @PostMapping(value = "/{id}/images")
+    public ResponseEntity<Void> uploadImage(@PathVariable UUID id,
+                                            @RequestParam("file") MultipartFile file) throws IOException {
+        productService.uploadImage(id, file);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -29,7 +29,7 @@ public class SecurityFilter extends OncePerRequestFilter {
             if(token != null) {
                 var email = tokenService.validateToken(token);
                 if(!email.isEmpty()) {
-                    UserDetails user = userAdminRepository.findByEmail(email);
+                    UserDetails user = userAdminRepository.findByEmail(email).orElse(null);
                     if(user != null) {
                         var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                         SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -4,12 +4,16 @@ import digital_catalog_api.demo.models.dto.ProductRequestDto;
 import digital_catalog_api.demo.models.dto.ProductResponseDto;
 import digital_catalog_api.demo.models.entities.Category;
 import digital_catalog_api.demo.models.entities.Product;
+import digital_catalog_api.demo.models.entities.ProductImage;
 import digital_catalog_api.demo.models.entities.enums.StockStatus;
 import digital_catalog_api.demo.repositories.CategoryRepository;
+import digital_catalog_api.demo.repositories.ProductImageRepository;
 import digital_catalog_api.demo.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @Service
@@ -17,9 +21,12 @@ public class ProductService {
 
     @Autowired
     ProductRepository productRepository;
-
     @Autowired
     CategoryRepository categoryRepository;
+    @Autowired
+    CloudnaryService cloudnaryService;
+    @Autowired
+    ProductImageRepository productImageRepository;
 
     public ProductResponseDto findProductById(UUID productId) {
         Product product = productRepository.findById(productId)
@@ -66,6 +73,20 @@ public class ProductService {
 
         Product saved = productRepository.save(product);
         return toDto(saved);
+    }
+
+    public void uploadImage(UUID productId, MultipartFile file) throws IOException {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException(productId));
+
+        String imageUrl = cloudnaryService.uploadImage(file);
+
+        ProductImage image = new ProductImage();
+        image.setImageUrl(imageUrl);
+        image.setProduct(product);
+        image.setDisplayOrder(product.getImages().size() + 1);
+
+        productImageRepository.save(image);
     }
 
     private ProductResponseDto toDto(Product product) {
