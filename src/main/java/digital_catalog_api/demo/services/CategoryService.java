@@ -8,7 +8,9 @@ import digital_catalog_api.demo.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
@@ -17,6 +19,13 @@ public class CategoryService {
     CategoryRepository categoryRepository;
     @Autowired
     ProductRepository productRepository;
+
+    public List<CategoryResponseDto> findAllCategories() {
+        return categoryRepository.findAll()
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
 
     public CategoryResponseDto findCategoryById(UUID id) {
         Category category = categoryRepository.findById(id)

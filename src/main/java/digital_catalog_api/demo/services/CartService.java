@@ -12,7 +12,6 @@ import digital_catalog_api.demo.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -35,7 +34,8 @@ public class CartService {
     
 
     public void addItem(String sessionId, CartItemRequestDto dto) {
-        Cart cart = cartRepository.findBySessionId(sessionId);
+        Cart cart = cartRepository.findBySessionId(sessionId)
+                .orElseThrow(() -> new ResourceNotFoundException(sessionId));
         Product product = productRepository.findById(dto.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException(dto.getProductId()));
         CartItem item = new CartItem();
@@ -50,22 +50,25 @@ public class CartService {
         cartItemRepository.deleteById(cartItemId);
     }
 
-    public Cart createCart(String sessionId) {
+    public CartResponseDto createCart(String sessionId) {
         Cart cart = new Cart();
         cart.setSessionId(sessionId);
         cart.setCreatedAt(Instant.now());
         cart.setItems(new ArrayList<>());
-        return cartRepository.save(cart);
+        Cart saved = cartRepository.save(cart);
+        return toDto(saved);
     }
 
     public void clearCart(String sessionId) {
-        Cart cart = cartRepository.findBySessionId(sessionId);
+        Cart cart = cartRepository.findBySessionId(sessionId)
+                .orElseThrow(() -> new ResourceNotFoundException(sessionId));
         cart.getItems().clear();
         cartRepository.save(cart);
     }
-    //getCart
+
     public CartResponseDto getCart(String sessionId) {
-        Cart cart = cartRepository.findBySessionId(sessionId);
+        Cart cart = cartRepository.findBySessionId(sessionId)
+                .orElseThrow(() -> new ResourceNotFoundException(sessionId));
 
         return toDto(cart);
     }
@@ -76,7 +79,7 @@ public class CartService {
         String message = cart.buildMessage();
         String encodedMessage = URLEncoder.encode(message, StandardCharsets.UTF_8);
 
-        return "https://wa.me/" + whatsappNumber + "text=" + encodedMessage;
+        return "https://wa.me/" + whatsappNumber + "?text=" + encodedMessage;
     }
 
     private CartItemResponseDto toDto(CartItem item) {
