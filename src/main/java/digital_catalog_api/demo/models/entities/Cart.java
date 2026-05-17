@@ -22,7 +22,7 @@ public class Cart implements WhatsAppMessageBuilder{
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToMany(mappedBy = "cart")
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> items;
     private String sessionId;
     private Instant createdAt;
