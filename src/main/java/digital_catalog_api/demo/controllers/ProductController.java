@@ -30,6 +30,12 @@ public class ProductController {
         return ResponseEntity.ok().body(products);
     }
 
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        productService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping(value = "/{id}")
     public ResponseEntity<ProductResponseDto> findProductById(@PathVariable UUID id) {
         ProductResponseDto product = productService.findProductById(id);

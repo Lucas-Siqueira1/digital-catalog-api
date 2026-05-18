@@ -84,6 +84,12 @@ public class ProductService {
         return toDto(saved);
     }
 
+    public void delete(UUID id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(id));
+        productRepository.delete(product);
+    }
+
     public void uploadImage(UUID productId, MultipartFile file) throws IOException {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException(productId));
