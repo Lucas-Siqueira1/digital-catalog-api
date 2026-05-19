@@ -11,9 +11,11 @@ import digital_catalog_api.demo.repositories.ProductImageRepository;
 import digital_catalog_api.demo.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,7 +28,7 @@ public class ProductService {
     @Autowired
     CategoryRepository categoryRepository;
     @Autowired
-    CloudnaryService cloudnaryService;
+    CloudnaryService cloudinaryService;
     @Autowired
     ProductImageRepository productImageRepository;
 
@@ -44,7 +46,8 @@ public class ProductService {
         return toDto(product);
     }
 
-    public ProductResponseDto insert(ProductRequestDto newProduct) {
+    @Transactional
+    public ProductResponseDto insert(ProductRequestDto newProduct, List<MultipartFile> images) throws IOException {
         Product product = new Product();
         Category category = categoryRepository.findById(newProduct.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException(newProduct.getCategoryId()));
@@ -53,6 +56,19 @@ public class ProductService {
         product.setPrice(newProduct.getPrice());
         product.setDescription(newProduct.getDescription());
         product.setStockStatus(newProduct.getStockStatus());
+
+        if (images != null && !images.isEmpty()) {
+            List<ProductImage> productImages = new ArrayList<>();
+
+            for (MultipartFile file : images) {
+                String imageUrl = cloudinaryService.uploadImage(file);
+                ProductImage img = new ProductImage();
+                img.setImageUrl(imageUrl);
+                img.setProduct(product);
+                productImages.add(img);
+            }
+            product.setImages(productImages);
+        }
 
         Product saved = productRepository.save(product);
 
@@ -94,7 +110,7 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException(productId));
 
-        String imageUrl = cloudnaryService.uploadImage(file);
+        String imageUrl = cloudinaryService.uploadImage(file);
 
         ProductImage image = new ProductImage();
         image.setImageUrl(imageUrl);

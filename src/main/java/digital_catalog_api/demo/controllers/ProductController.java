@@ -4,6 +4,7 @@ import digital_catalog_api.demo.models.dto.ProductResponseDto;
 import digital_catalog_api.demo.models.dto.StockStatusRequestDto;
 import digital_catalog_api.demo.models.entities.enums.StockStatus;
 import digital_catalog_api.demo.services.ProductService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,9 +43,10 @@ public class ProductController {
         return ResponseEntity.ok().body(product);
     }
 
-    @PostMapping
-    public ResponseEntity<ProductResponseDto> insert(@RequestBody ProductRequestDto newProduct) {
-        ProductResponseDto product = productService.insert(newProduct);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ProductResponseDto> insert(@ModelAttribute ProductRequestDto newProduct,
+                                                     @RequestParam(value = "images", required = false) List<MultipartFile> images ) throws IOException {
+        ProductResponseDto product = productService.insert(newProduct, images);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(product.getId())
