@@ -28,7 +28,7 @@ public class ProductService {
     @Autowired
     CategoryRepository categoryRepository;
     @Autowired
-    CloudnaryService cloudinaryService;
+    CloudinaryService cloudinaryService;
     @Autowired
     ProductImageRepository productImageRepository;
 

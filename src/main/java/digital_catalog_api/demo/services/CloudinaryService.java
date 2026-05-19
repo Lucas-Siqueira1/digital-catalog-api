@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @Service
-public class CloudnaryService {
+public class CloudinaryService {
 
     @Autowired
     private Cloudinary cloudinary;
