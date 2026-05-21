@@ -57,6 +57,8 @@ public class ProductService {
         product.setDescription(newProduct.getDescription());
         product.setStockStatus(newProduct.getStockStatus());
 
+        Product saved = productRepository.save(product);
+
         if (images != null && !images.isEmpty()) {
             List<ProductImage> productImages = new ArrayList<>();
 
@@ -64,13 +66,13 @@ public class ProductService {
                 String imageUrl = cloudinaryService.uploadImage(file);
                 ProductImage img = new ProductImage();
                 img.setImageUrl(imageUrl);
-                img.setProduct(product);
+                img.setProduct(saved);
                 productImages.add(img);
             }
-            product.setImages(productImages);
-        }
 
-        Product saved = productRepository.save(product);
+            saved.setImages(productImages);
+            productRepository.save(saved);
+        }
 
         return toDto(saved);
     }
