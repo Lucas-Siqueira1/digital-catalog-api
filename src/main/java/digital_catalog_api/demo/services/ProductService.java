@@ -6,6 +6,7 @@ import digital_catalog_api.demo.models.entities.Category;
 import digital_catalog_api.demo.models.entities.Product;
 import digital_catalog_api.demo.models.entities.ProductImage;
 import digital_catalog_api.demo.models.entities.enums.StockStatus;
+import digital_catalog_api.demo.repositories.CartItemRepository;
 import digital_catalog_api.demo.repositories.CategoryRepository;
 import digital_catalog_api.demo.repositories.ProductImageRepository;
 import digital_catalog_api.demo.repositories.ProductRepository;
@@ -29,6 +30,8 @@ public class ProductService {
     CloudinaryService cloudinaryService;
     @Autowired
     ProductImageRepository productImageRepository;
+    @Autowired
+    CartItemRepository cartItemRepository;
 
     public List<ProductResponseDto> findAll() {
         return productRepository.findAll()
@@ -87,6 +90,8 @@ public class ProductService {
     public void delete(UUID id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
+        cartItemRepository.deleteByProduct(product);
+        productImageRepository.deleteByProduct(product);
         productRepository.delete(product);
     }
 
