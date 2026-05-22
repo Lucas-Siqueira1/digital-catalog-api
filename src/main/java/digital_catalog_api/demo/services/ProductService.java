@@ -130,7 +130,11 @@ public class ProductService {
         dto.setDescription(product.getDescription());
         dto.setStockStatus(product.getStockStatus());
         dto.setCategoryId(product.getCategory().getId());
-
+        dto.setImagesUrls(
+                product.getImages().stream()
+                        .map(ProductImage::getImageUrl)
+                        .collect(Collectors.toList())
+        );
         return dto;
     }
 }
