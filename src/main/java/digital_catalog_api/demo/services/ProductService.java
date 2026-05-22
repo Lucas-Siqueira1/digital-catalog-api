@@ -121,9 +121,11 @@ public class ProductService {
         dto.setStockStatus(product.getStockStatus());
         dto.setCategoryId(product.getCategory().getId());
         dto.setImagesUrls(
-                product.getImages().stream()
+                product.getImages() != null
+                        ? product.getImages().stream()
                         .map(ProductImage::getImageUrl)
                         .collect(Collectors.toList())
+                        : List.of()
         );
         return dto;
     }
