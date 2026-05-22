@@ -12,6 +12,7 @@ import digital_catalog_api.demo.repositories.ProductImageRepository;
 import digital_catalog_api.demo.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -47,6 +48,7 @@ public class ProductService {
         return toDto(product);
     }
 
+    @Transactional
     public ProductResponseDto insert(ProductRequestDto newProduct) {
         Product product = new Product();
         Category category = categoryRepository.findById(newProduct.getCategoryId())
@@ -87,6 +89,7 @@ public class ProductService {
         return toDto(saved);
     }
 
+    @Transactional
     public void delete(UUID id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
